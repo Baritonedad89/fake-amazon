@@ -42,7 +42,7 @@ const prompts = () => {
 
     ]).then(response => {
         let userProduct = response.purchase;
-        let userQuantity = response.quantity;
+        let userQuantity = parseFloat(response.quantity);
 
         const query = `SELECT product_name, stock_quantity, price FROM products WHERE item_id =${userProduct}`;
         connection.query(query, function (err, res) {
@@ -50,7 +50,8 @@ const prompts = () => {
                 const p = res[i].price;
                 const r = res[i].stock_quantity;
                 if (userQuantity > r) {
-                    console.log("Insufficient quantity")
+                    console.log("Insufficient quantity");
+                    prompts();
                 } else {
                     let newQuantity = r - userQuantity;
                     connection.query(
@@ -67,7 +68,8 @@ const prompts = () => {
                         function (err, res) {
                             if (err) throw err;
                             const total = userQuantity * p;
-                            console.log(`\nPurchase Completed.\nTotal Cost: $${total}`)
+                            console.log(`\nPurchase Completed.\nTotal Cost: $${total}`);
+                            connection.end();
                         }
 
 
@@ -89,16 +91,16 @@ const prompts = () => {
 const getItemsForSale = () => {
     makeConnection()
     const query = "SELECT item_id, product_name, price FROM products";
-    console.log("Products for sale: \n");
+    console.log("\nPRODUCTS FOR SALE:\n");
     connection.query(query, function (err, res) {
         for (let i = 0; i < res.length; i++) {
             const products = res[i];
-            const productsList = `id# ${products.item_id} - ${products.product_name} | Price: $${products.price}`
+            const productsList = `id# ${products.item_id} - ${products.product_name}, $${products.price}`
             console.log(productsList)
         }
         console.log('---------------------------------------------------------')
     })
-    setTimeout(prompts, 2000)
+    setTimeout(prompts, 1000)
 };
 getItemsForSale();
 
