@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Baritonedad89/fake-amazon#readme",
   "dependencies": {
     "inquirer": "^6.2.1",
+    "jquery": "^3.3.1",
     "mysql": "^2.16.0"
   }
 }
