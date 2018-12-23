@@ -3,18 +3,17 @@ CREATE DATABASE bamazon;
 
 USE bamazon;
 
-
 CREATE TABLE products (
 item_id INT NOT NULL AUTO_INCREMENT,
 product_name VARCHAR(225) NOT NULL,
 department_name VARCHAR(225) NOT NULL,
 price DECIMAL(5,2) NOT NULL,
-stock_quanity INT NOT NULL,
+stock_quantity INT NOT NULL,
 PRIMARY KEY(item_id)
 );
 
 INSERT INTO products (product_name, department_name, price,
-stock_quanity)
+stock_quantity)
 VALUE("UGG Kids K Neumall II Pull-on Boot, Black, 6 M US Big Kid", "kid shoes", 109.95, 25),
 ("Jarrow Formulas Curcumin 95, 500 mg, 60 Count", "nutrition", 12.70, 100),
 ("Cracking the Coding Interview: 189 Programming Questions and Solutions", "books", 38.00, 50),
