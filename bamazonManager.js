@@ -17,6 +17,22 @@ const makeConnection = () => {
     });
 };
 
+const connectionTwo = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "Baritone2018*",
+    database: "bamazon"
+});
+
+const makeConnectionTwo = () => {
+    connectionTwo.connect(err => {
+        if (err) throw err;
+        // console.log("connected as id " + connection.threadId + "\n");
+
+    });
+};
+
 
 const createManager = () => {
     console.log("\nWelcome to the Manager Profile Creation Portal\n");
@@ -153,42 +169,142 @@ const signIntoPortal = () => {
         });
         // do something after use is signed in 
     }).then(response => {
-        inquirer.prompt(
-            {
-                message: "Menu Options:",
-                type: "list",
-                name: "menu",
-                choices: [
-                    "View Products for Sale",
-                    "View Low Inventory",
-                    "Add to Inventory",
-                    "Add New Product",
-                    "Exit Portal"
-                ]
-            }).then(response => {
-                switch (response.menu) {
-                    case "View Products for Sale":
-                        // run this function
-                        break;
-                    case "View Low Inventory":
-                        // run this function
-                        break;
-                    case "Add to Inventory":
-                        // run this function
-                        break;
-                    case "Add New Product":
-                        // run this function
-                        break;
-                    case "Exit Portal":
-                        connection.end();
-                        break;
-                }
-            })
+        portalMenu()
+    });
+
+};
+
+
+
+const portalMenu = () => {
+    inquirer.prompt([
+        {
+            message: "\nMenu Options:\n",
+            type: "list",
+            name: "menu",
+            choices: [
+                "View Products for Sale",
+                "View Low Inventory",
+                "Add to Inventory",
+                "Add New Product",
+                "Exit Portal"
+            ]
+        }
+    ]).then(response => {
+        switch (response.menu) {
+            case "View Products for Sale":
+                viewProducts()
+                break;
+            case "View Low Inventory":
+                lowInventory()
+                break;
+            case "Add to Inventory":
+                addInventory()
+                break;
+            case "Add New Product":
+                // run this function
+                break;
+            case "Exit Portal":
+                connection.end()
+                connectionTwo.end();
+                break;
+        }
     })
 
-}
+
+};
+
+
+const viewProducts = () => {
+    const query = "SELECT item_id, product_name, price, stock_quantity FROM products";
+    connectionTwo.query(query, function (err, res) {
+        if (err) throw err;
+        console.log('\n----------------------------------------Products for sale---------------------------------\n')
+        for (let i = 0; i < res.length; i++) {
+            let item = res[i];
+            console.log(`id: ${item.item_id}, item: ${item.product_name}, price: $${item.price}, qty: ${item.stock_quantity}`)
+            console.log('-----------------------------------------------------------------------')
+        }
+        portalMenu()
+    })
+};
+
+const lowInventory = () => {
+    const query = "SELECT product_name, stock_quantity FROM products WHERE stock_quantity < 5";
+    connectionTwo.query(query, function (err, res) {
+        if (err) throw err;
+        console.log('\n----------------------------------------Inventory below 5---------------------------------\n')
+        for (let i = 0; i < res.length; i++) {
+            let item = res[i];
+            console.log(`item: ${item.product_name}`)
+            console.log(`qty: ${item.stock_quantity}`)
+            console.log('-----------------------------------------------------------------------')
+        }
+        portalMenu()
+    })
+};
+
+const addInventory = () => {
+    inquirer.prompt([
+        {
+            message: "Which item would you like to restock? (provide id #)",
+            type: "input",
+            name: "restock",
+            validate: function (value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                return true;
+            }
+        },
+        {
+            message: "How much would you like to add?",
+            type: "input",
+            name: "newQty",
+            validate: function (value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                return true;
+            }
+        }
+    ]).then(response => {
+        let stock = ""
+        let newStock = ""
+        const query = `SELECT stock_quantity FROM products WHERE item_id ="${response.restock}"`;
+        connectionTwo.query(query, function (err, res) {
+            if (err) throw err;
+            for (let i = 0; i < res.length; i++) {
+                stock = res[i].stock_quantity;
+            }
+            newStock = parseInt(stock) + parseInt(response.newQty);
+
+            connectionTwo.query(
+                "UPDATE products SET ? WHERE ?",
+                [
+                    {
+                        stock_quantity: newStock
+                    },
+                    {
+                        item_id: response.restock
+                    }
+                ],
+                function (err, res) {
+                    if (err) throw err;
+                    console.log(`\nAdded quantity of ${response.newQty} to item # ${response.restock}!\n`);
+                    portalMenu()
+                }
+            )
+
+        });
+
+    })
+
+};
+
+
+
 const managerPortal = () => {
-    makeConnection();
     console.log("Welcome to the Manager Portal.");
     console.log('---------------------------------');
     inquirer.prompt([
@@ -211,5 +327,5 @@ const managerPortal = () => {
                 break;
         }
     })
-}
+};
 managerPortal()
