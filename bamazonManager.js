@@ -165,12 +165,10 @@ const signIntoPortal = () => {
                     console.log('-------------------------------------------')
                     console.log(`\n${validUser.first_name} ${validUser.last_name} signed in.\n`)
                 }
+                portalMenu()
             }
         });
-        // do something after use is signed in 
-    }).then(response => {
-        portalMenu()
-    });
+    })
 
 };
 
@@ -323,7 +321,7 @@ const addProduct = () => {
                     return false;
                 }
                 return true;
-            } 
+            }
         },
         {
             message: "Enter quantity",
