@@ -119,7 +119,6 @@ const create = () => {
         }
 
     })
-    // use these credentials to sign in to the portal and run that function 
 };
 
 const signIntoPortal = () => {
@@ -223,7 +222,7 @@ const viewProducts = () => {
             console.log(`id: ${item.item_id}, item: ${item.product_name}, price: $${item.price}, qty: ${item.stock_quantity}`)
             console.log('-----------------------------------------------------------------------')
         }
-        portalMenu()
+        setTimeout(portalMenu, 1000)
     })
 };
 
@@ -238,7 +237,7 @@ const lowInventory = () => {
             console.log(`qty: ${item.stock_quantity}`)
             console.log('-----------------------------------------------------------------------')
         }
-        portalMenu()
+        setTimeout(portalMenu, 1000)
     })
 };
 
@@ -346,7 +345,8 @@ const addProduct = () => {
 
             function (err, res) {
                 if (err) throw err;
-                console.log(`\n${response.quantity} ${response.product}'s added to inventory!`)
+                console.log(`\n${response.quantity} ${response.product}'s added to inventory!\n`);
+                setTimeout(portalMenu, 1000);
             }
         )
 
