@@ -202,7 +202,7 @@ const portalMenu = () => {
                 addInventory()
                 break;
             case "Add New Product":
-                // run this function
+                addProduct()
                 break;
             case "Exit Portal":
                 connection.end()
@@ -301,6 +301,59 @@ const addInventory = () => {
     })
 
 };
+
+const addProduct = () => {
+    inquirer.prompt([
+        {
+            message: "Enter product name",
+            type: "input",
+            name: "product"
+        },
+        {
+            message: "Enter department name",
+            type: "input",
+            name: "department"
+        },
+        {
+            message: "Enter price (xx.xx)",
+            type: "input",
+            name: "price",
+            validate: function (value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                return true;
+            } 
+        },
+        {
+            message: "Enter quantity",
+            type: "input",
+            name: "quantity",
+            validate: function (value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                return true;
+            }
+        }
+    ]).then(response => {
+        connectionTwo.query(
+            "INSERT INTO products SET ?",
+            {
+                product_name: response.product,
+                department_name: response.department,
+                price: response.price,
+                stock_quantity: response.quantity
+            },
+
+            function (err, res) {
+                if (err) throw err;
+                console.log(`\n${response.quantity} ${response.product}'s added to inventory!`)
+            }
+        )
+
+    });
+}
 
 
 
