@@ -44,20 +44,25 @@ const prompts = () => {
         let userProduct = response.purchase;
         let userQuantity = parseFloat(response.quantity);
 
-        const query = `SELECT product_name, stock_quantity, price FROM products WHERE item_id =${userProduct}`;
+        const query = `SELECT product_name, stock_quantity, price, product_sales FROM products WHERE item_id =${userProduct}`;
         connection.query(query, function (err, res) {
             for (let i = 0; i < res.length; i++) {
+                const ps = res[i].product_sales
                 const p = res[i].price;
                 const r = res[i].stock_quantity;
                 if (userQuantity > r) {
                     console.log("Insufficient quantity");
                     prompts();
                 } else {
+                    let salesTotal = p * userQuantity;
+                    let productSales = ps + salesTotal;
+
                     let newQuantity = r - userQuantity;
                     connection.query(
                         "UPDATE products SET ? WHERE ?",
                         [
                             {
+                                product_sales: productSales,
                                 stock_quantity: newQuantity
                             },
                             {
@@ -69,7 +74,7 @@ const prompts = () => {
                             if (err) throw err;
                             const total = userQuantity * p;
                             console.log(`\nPurchase Completed.\nTotal Cost: $${total}`);
-                            connection.end();
+                            connection.end()
                         }
 
 

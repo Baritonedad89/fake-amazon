@@ -10,6 +10,8 @@ const connection = mysql.createConnection({
     database: "manager_profiles"
 });
 
+
+
 const makeConnection = () => {
     connection.connect(err => {
         if (err) throw err;
@@ -196,7 +198,7 @@ const portalMenu = () => {
                 lowInventory()
                 break;
             case "Add to Inventory":
-                addInventory()
+                displayCurrentInventory()
                 break;
             case "Add New Product":
                 addProduct()
@@ -241,6 +243,20 @@ const lowInventory = () => {
     })
 };
 
+const displayCurrentInventory = () => {
+    const query = "SELECT item_id, product_name, stock_quantity FROM products";
+    console.log("\n----------------------------Current Inventory------------------------\n");
+    connectionTwo.query(query, function (err, res) {
+        for (let i = 0; i < res.length; i++) {
+            const products = res[i];
+            const productsList = `id# ${products.item_id} - ${products.product_name}, qty: ${products.stock_quantity}`
+            console.log(productsList)
+        }
+        console.log('---------------------------------------------------------')
+        setTimeout(addInventory, 500)
+    });
+}
+
 const addInventory = () => {
     inquirer.prompt([
         {
@@ -266,8 +282,9 @@ const addInventory = () => {
             }
         }
     ]).then(response => {
-        let stock = ""
-        let newStock = ""
+        let newCurrentStock = "";
+        let stock = "";
+        let newStock = "";
         const query = `SELECT stock_quantity FROM products WHERE item_id ="${response.restock}"`;
         connectionTwo.query(query, function (err, res) {
             if (err) throw err;
@@ -288,8 +305,17 @@ const addInventory = () => {
                 ],
                 function (err, res) {
                     if (err) throw err;
-                    console.log(`\nAdded quantity of ${response.newQty} to item # ${response.restock}!\n`);
-                    portalMenu()
+                    const query = `SELECT stock_quantity, product_name FROM products WHERE item_id ="${response.restock}"`;
+                    connectionTwo.query(query, function (err, res) {
+                        if (err) throw err;
+                        for (let i = 0; i < res.length; i++) {
+                            let productName = res[i].product_name;
+                            newCurrentStock = res[i].stock_quantity;
+                            console.log(`\nCurrent stock for "${productName}" is now ${newCurrentStock}.\n`);
+
+                        }
+                    });
+                    setTimeout(portalMenu, 1000);
                 }
             )
 
