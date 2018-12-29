@@ -74,7 +74,7 @@ const create = () => {
             // }
         },
         {
-            message: "Please create a user name.",
+            message: "Please create a user name:",
             type: "input",
             name: "userName",
             validate: function (value) {
@@ -85,7 +85,7 @@ const create = () => {
             }
         },
         {
-            message: "Please set up a password.",
+            message: "Please set up a password:",
             type: "password",
             mask: '*',
             name: "password",
@@ -206,6 +206,7 @@ const portalMenu = () => {
             case "Exit Portal":
                 connection.end()
                 connectionTwo.end();
+                console.log('\nExited portal\n')
                 break;
         }
     })
@@ -232,12 +233,16 @@ const lowInventory = () => {
     const query = "SELECT product_name, stock_quantity FROM products WHERE stock_quantity < 5";
     connectionTwo.query(query, function (err, res) {
         if (err) throw err;
-        console.log('\n----------------------------------------Inventory below 5---------------------------------\n')
+        console.log('\n----------------------------------------Inventory below quantity of 5---------------------------------\n')
         for (let i = 0; i < res.length; i++) {
             let item = res[i];
-            console.log(`item: ${item.product_name}`)
-            console.log(`qty: ${item.stock_quantity}`)
+            console.log(`Item: ${item.product_name}`)
+            console.log(`Qty: ${item.stock_quantity}`)
             console.log('-----------------------------------------------------------------------')
+        }
+        if (res.length == 0) {
+            console.log('All inventory is currently above quantity of 5\n')
+
         }
         setTimeout(portalMenu, 1000)
     })

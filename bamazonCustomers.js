@@ -73,7 +73,7 @@ const prompts = () => {
                         function (err, res) {
                             if (err) throw err;
                             const total = userQuantity * p;
-                            console.log(`\nPurchase Completed.\nTotal Cost: $${total}`);
+                            console.log(`\nPurchase Completed.\nTotal Cost: $${total.toFixed(2)}`);
                             connection.end()
                         }
 
