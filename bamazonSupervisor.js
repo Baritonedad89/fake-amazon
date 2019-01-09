@@ -57,14 +57,15 @@ const getSalesByDepartment = () => {
     on a.department_name = b.department_name"
 
     connection.query(query, function (err, res) {
-        console.log(res)
+        console.table(res)
         
-
         // res.forEach(result => {
         //     let totalProfit = result.over_head_costs - result.product_sales
         //     if(totalProfit === result.over_head_costs){
         //         totalProfit = 0;
         //     }
+
+        //     deptIdArray.push(results.department_id)
         //     console.table([
         //         {
         //             department_id: `${result.department_id}`,
@@ -74,6 +75,20 @@ const getSalesByDepartment = () => {
         //             total_profit: `${totalProfit}`
         //         }
         //     ]);   
+
+
+        // })
+
+        // res.map(result =>{
+        //     console.table([
+        //                 {
+        //                     department_id: `${result.department_id}`,
+        //                     // department_name: `${result.department_name}`,
+        //                     // over_head_costs: `${result.over_head_costs}`,
+        //                     // product_sales: `${result.product_sales}`,
+        //                     // total_profit: `${totalProfit}`
+        //                 }
+        //             ]);   
 
 
         // })
