@@ -206,7 +206,7 @@ const portalMenu = () => {
             case "Exit Portal":
                 connection.end()
                 connectionTwo.end();
-                console.log('\nExited portal\n')
+                console.log('\nExited Manager Portal\n')
                 break;
         }
     })

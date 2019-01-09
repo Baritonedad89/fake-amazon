@@ -94,7 +94,7 @@ const prompts = () => {
 }
 
 const getItemsForSale = () => {
-    makeConnection()
+    // makeConnection()
     const query = "SELECT item_id, product_name, price FROM products";
     console.log("\nPRODUCTS FOR SALE:\n");
     connection.query(query, function (err, res) {

@@ -71,7 +71,7 @@ select
 	IFNULL(sum(p.product_sales), 0) as product_sales,
 	IFNULL(sum(p.product_sales), 0) - IFNULL(d.over_head_costs, 0) as total_profit
 from departments d
-join products p
+left join products p
 on d.department_id = p.department_id
 group by d.department_id
 

@@ -20,8 +20,9 @@ const makeConnection = () => {
     });
 };
 
+
+
 const beSupervisor = () => {
-    makeConnection()
     inquirer.prompt([
         {
             message: "\nMenu options:\n",
@@ -30,69 +31,78 @@ const beSupervisor = () => {
             choices: ["View Product Sales by Department", "Create New Department", "Exit"]
         }
     ]).then(response => {
+
         switch (response.options) {
             case "View Product Sales by Department":
-                getSalesByDepartment()
+                getSalesByDept()
                 break;
             case "Create New Department":
-                // run function
+                createNewDept()
                 break;
             case "Exit":
                 connection.end()
-                console.log('\nExited\n')
+                console.log('\nExited Supervisor\n')
                 break;
         }
     })
 };
 beSupervisor()
 
-const getSalesByDepartment = () => {
-    const query = "select distinct \
-    a.department_id, \
-    a.department_name, \
-    a.over_head_costs, \
-    b.product_sales \
-    from departments a \
-    left join products b \
-    on a.department_name = b.department_name"
+const getSalesByDept = () => {
+    const query = `
+    SELECT 
+	d.department_id,  
+    d.department_name, 
+    d.over_head_costs, 
+	IFNULL(sum(p.product_sales), 0) AS product_sales,
+	IFNULL(sum(p.product_sales), 0) - IFNULL(d.over_head_costs, 0) AS total_profit
+    FROM departments d
+    LEFT JOIN products p
+    ON d.department_id = p.department_id
+    GROUP BY d.department_id`
 
     connection.query(query, function (err, res) {
+        console.log('\n---------------------------Product Sales by Department----------------------------\n')
         console.table(res)
-        
-        // res.forEach(result => {
-        //     let totalProfit = result.over_head_costs - result.product_sales
-        //     if(totalProfit === result.over_head_costs){
-        //         totalProfit = 0;
-        //     }
+    })
+    setTimeout(beSupervisor, 1000);
+}
 
-        //     deptIdArray.push(results.department_id)
-        //     console.table([
-        //         {
-        //             department_id: `${result.department_id}`,
-        //             department_name: `${result.department_name}`,
-        //             over_head_costs: `${result.over_head_costs}`,
-        //             product_sales: `${result.product_sales}`,
-        //             total_profit: `${totalProfit}`
-        //         }
-        //     ]);   
+const createNewDept = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter name of new department",
+            name: "department"
+        },
+        {
+            type: "input",
+            message: "Enter over head costs",
+            name: "over_head",
+            validate: function (value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                return true;
+            }
+        }
+    ]).then(response => {
+        const department = response.department;
+        const overHead = parseFloat(response.over_head);
 
-
-        // })
-
-        // res.map(result =>{
-        //     console.table([
-        //                 {
-        //                     department_id: `${result.department_id}`,
-        //                     // department_name: `${result.department_name}`,
-        //                     // over_head_costs: `${result.over_head_costs}`,
-        //                     // product_sales: `${result.product_sales}`,
-        //                     // total_profit: `${totalProfit}`
-        //                 }
-        //             ]);   
-
-
-        // })
-                
+        const query = `
+        INSERT INTO departments (department_name, over_head_costs)
+        VALUE("${department}", ${overHead})
+        `
+        connection.query(query, function (err, res) {
+            const nextQuery = `SELECT * FROM departments`;
+            connection.query(nextQuery, function (err, res) {
+                console.log('\n-----------------Departments Table-----------------------\n')
+                console.table(res);
+            })
+        })
+        setTimeout(beSupervisor, 1000);
 
     })
+
 }
