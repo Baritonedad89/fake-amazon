@@ -363,8 +363,26 @@ const addProduct = () => {
                 }
                 return true;
             }
+        },
+        {
+            message: "Enter over head costs",
+            type: "input",
+            name: "overHead",
+            validate: function (value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                return true;
+            }
         }
     ]).then(response => {
+        connectionTwo.query(
+            "INSERT INTO departments SET ?",
+            {
+                department_name: response.department,
+                over_head_costs: response.overHead
+            },
+        );
         connectionTwo.query(
             "INSERT INTO products SET ?",
             {
@@ -380,7 +398,6 @@ const addProduct = () => {
                 setTimeout(portalMenu, 1000);
             }
         )
-
     });
 }
 

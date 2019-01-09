@@ -48,6 +48,9 @@ const beSupervisor = () => {
 };
 beSupervisor()
 
+// I did things a little different in order to accomplish this. In my products table instead of naming each department 
+// I made sort of a foreign key so that the department ID from the department table corresponds with the department ID
+// in the products table 
 const getSalesByDept = () => {
     const query = `
     SELECT 
@@ -58,8 +61,8 @@ const getSalesByDept = () => {
 	IFNULL(sum(p.product_sales), 0) - IFNULL(d.over_head_costs, 0) AS total_profit
     FROM departments d
     LEFT JOIN products p
-    ON d.department_id = p.department_id
-    GROUP BY d.department_id`
+    ON d.department_name = p.department_name
+    GROUP BY d.department_id;`
 
     connection.query(query, function (err, res) {
         console.log('\n---------------------------Product Sales by Department----------------------------\n')
@@ -102,7 +105,5 @@ const createNewDept = () => {
             })
         })
         setTimeout(beSupervisor, 1000);
-
     })
-
 }
