@@ -49,29 +49,25 @@ const create = () => {
             message: "Please enter your first name:",
             type: "input",
             name: "firstName",
-            // validate: function (value) {
-            //     const number = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            //     for (let i = 0; i < value.length; i++) {
-            //         for (let j = 0; j < number.length; j++) {
-            //             if(value[i] === number[j]) {
-            //                 return false;
-            //         }
-            //         return true;
-
-            //     }
-            //     }
-            // }
+            validate: function isValidFirstName(value) {
+                if(!/^[a-zA-Z]+$/.test(value)) {
+                    console.log('\nMust only include letter characters\n');
+                } else {
+                    return true;
+                }
+            }
         },
         {
             message: "Please enter your last name:",
             type: "input",
             name: "lastName",
-            // validate: function (value) {
-            //     if (!isNaN(value)) {
-            //         return false;
-            //     }
-            //     return true;
-            // }
+            validate: function isValidFirstName(value) {
+                if(!/^[a-zA-Z]+$/.test(value)){
+                    console.log('\nMust only include letter characters\n');
+                } else {
+                    return true;
+                }
+            }
         },
         {
             message: "Please create a user name:",
@@ -89,11 +85,17 @@ const create = () => {
             type: "password",
             mask: '*',
             name: "password",
-            validate: function (value) {
-                if (value.length < 8) {
-                    console.log('\nPassword must be at least 8 characters long')
+            validate: function isValidPassword(value) {
+                if (/[a-z]/.test(value) && /[A-Z]/.test(value) && /[0-9]/.test(value)) {
+                    return true;
+                } else if (value.length <= 5) {
+                    console.log('\nUsername must be at least 6 characters long')
                     return false;
-                } return true;
+                } else if (/[a-z]/.test(value) && /[A-Z]/.test(value) && /[0-9]/.test(value) && value.length <= 5) {
+                    console.log('\nUsername must be at least 6 characters long')
+                } else {
+                    console.log('\nMust contain a lowercase, uppercase letter and a number\n')
+                }
             }
         },
         {
